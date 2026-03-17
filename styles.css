@@ -161,6 +161,7 @@ footer {
   width: 90%;
   height: 48px;
   border: 3px solid #000000;
+  border-bottom: 2px solid transparent;
   border-radius: 12px;
   align-items: center;
   text-decoration: none;
@@ -175,12 +176,14 @@ footer {
 }
 
 .item.active {
-  border: 3px solid #00ffff; 
+  border-color: #000000;
+  border-bottom: 2px solid #00ffff;
   color: #00ffff;
 }
 
 .item:hover{
-  border: 3px solid #00ffff; 
+  border-color: #000000;
+  border-bottom: 2px solid #00ffff;
   color: #00ffff;
 }
 
@@ -1770,14 +1773,13 @@ h1 {
 
 .modal-ebootux-content {
   background: linear-gradient(150deg, #000000, #1a1a1a, #000000);
-  border: 2px solid #0ff;
+  border: 1px solid #bbbbbb;
   border-radius: 24px;
   padding: 28px 24px;
   max-width: 360px;
   width: 90%;
   text-align: center;
   color: #0ff;
-  box-shadow: 0 0 25px #0ff;
   animation: modalFadeIn 0.25s ease;
 }
 
@@ -2227,4 +2229,233 @@ h1 {
 
 .dwl-statux:hover {
   transform: scale(1.1);
+}
+
+
+
+.stx-library-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 300;
+}
+
+.stx-library-modal {
+  width: 340px;
+  background: #111;
+  border: 1px solid #bbb;
+  border-radius: 20px;
+  padding: 16px;
+  color: #bbb;
+}
+
+/* HEADER */
+
+.stx-library-header {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #444;
+}
+
+.stx-tab {
+  background: none;
+  border: none;
+  color: #777;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.stx-tab.active {
+  color: #fff;
+  border-bottom: 2px solid #0ff;
+}
+
+/* CONTENT */
+
+.stx-tab-content {
+  display: none;
+  margin-top: 16px;
+}
+
+.stx-tab-content.active {
+  display: block;
+}
+
+/* ITEMS */
+
+.stx-code-item,
+.stx-systux-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  margin-bottom: 10px;
+}
+
+/* INFO */
+
+.stx-card-name {
+  color: #fff;
+}
+
+.stx-card-type {
+  font-size: 12px;
+  color: #777;
+}
+
+/* ACTIONS */
+
+.stx-code-actions,
+.stx-systux-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.stx-icon-btn {
+  background: none;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.stx-icon-btn img {
+  width: 18px;
+}
+
+.stx-settings-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #111;
+  border: 1px solid #0ff;
+  border-radius: 50%;
+  padding: 12px;
+  cursor: pointer;
+  transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+.stx-settings-btn.active {
+  transform: rotate(90deg);
+  border-color: #ff4d4d;
+}
+
+/* MODAL */
+
+.stx-settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+.stx-settings-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.stx-setting-modal {
+  width: 260px;
+  background: #111;
+  border: 1px solid #bbb;
+  border-radius: 20px;
+  padding: 16px;
+  transform: scaleY(0);
+  transform-origin: right;
+  transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+.stx-settings-overlay.active .stx-setting-modal {
+  transform: scaleY(1);
+}
+
+/* ITEMS */
+
+.stx-setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+}
+
+.stx-setting-item img {
+  width: 20px;
+}
+
+/* SWITCH */
+
+.stx-switch {
+  width: 42px;
+  height: 22px;
+  background: #222;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.stx-switch::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #0f0;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: .3s;
+}
+
+.stx-switch.active {
+  background: #300;
+}
+
+.stx-switch.active::after {
+  left: 22px;
+  background: #f00;
+}
+
+/* STX behavior states */
+.stx-library-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+.stx-library-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.stx-icon-btn.stx-copied {
+  border-color: #0ff;
+}
+
+body.stx-no-hover *:hover {
+  all: unset;
+}
+
+body.stx-focus-mode .barra-de-navegacion,
+body.stx-focus-mode .buscador,
+body.stx-focus-mode .boton-de-ensanche-de-barra-de-navegacion {
+  display: none !important;
+}
+
+body.stx-focus-mode .app-section,
+body.stx-focus-mode .section-home,
+body.stx-focus-mode footer {
+  margin-left: 0;
 }
