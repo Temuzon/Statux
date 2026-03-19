@@ -295,22 +295,62 @@ footer {
   user-select: none;
 }
 
-.imagen-de-fondo {
-  width: 400px;
-  border-radius: 16px;
-  animation-name: fondo-de-la-web;
-  animation-duration: 3s;
+.statux-hero-loader {
+  width: 300px;
+  height: 300px;
+  animation: statux-aparecer-logo 0.8s ease-out forwards;
 }
 
-@keyframes fondo-de-la-web {
-  
-  from {
-    opacity: 0;
-  }
-  
-  to {
-    opacity: 1;
-  }
+.statux-hero-loader svg {
+  width: 100%;
+  height: 100%;
+}
+
+.statux-path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cuerpo {
+  stroke: #ffffff;
+  stroke-width: 5;
+  stroke-dasharray: 2500;
+  stroke-dashoffset: 2500;
+  animation: statux-entrada-cuerpo 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ojos {
+  stroke: #00ffff;
+  stroke-width: 4;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  filter: drop-shadow(0 0 0px #00ffff);
+  animation: statux-entrada-ojos 2.5s ease-out 1.5s forwards,
+             statux-vibrar-ojos 0.2s ease-in-out 2.8s 2;
+}
+
+@keyframes statux-aparecer-logo {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes statux-entrada-cuerpo {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes statux-entrada-ojos {
+  0% { stroke-dashoffset: 1000; filter: drop-shadow(0 0 0px #00ffff); }
+  70% { stroke-dashoffset: 0; filter: drop-shadow(0 0 20px #00ffff); }
+  80% { opacity: 0.5; }
+  90% { opacity: 1; filter: drop-shadow(0 0 12px #00ffff); }
+  100% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 10px #00ffff); }
+}
+
+@keyframes statux-vibrar-ojos {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px) translateY(1px); }
+  75% { transform: translateX(2px) translateY(-1px); }
 }
 
 .welcome-box {
@@ -2298,7 +2338,7 @@ h1 {
   flex-direction: column;
   gap: 12px;
   align-items: center;
-  z-index: 1400;
+  z-index: 1505;
 }
 
 .floating-btn {
@@ -2343,6 +2383,23 @@ h1 {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .floating-container {
+    top: 16px;
+    right: 16px;
+    bottom: auto;
+    flex-direction: row;
+  }
+
+  .secondary-btn {
+    transform: translateX(20px);
+  }
+
+  .floating-container.active .secondary-btn {
+    transform: translateX(0);
+  }
 }
 
 /* ================= MODAL SETTINGS ================= */
