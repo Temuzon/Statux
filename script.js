@@ -1258,10 +1258,10 @@ const stxRuntime = (() => {
 
         <div class="code-actions stx-code-actions">
           <button class="icon-btn stx-icon-btn copy" type="button" data-stx-action="copy" data-stx-id="${escAttr(item.id)}" aria-label="Copiar código">
-            <img src="" alt="Copiar código">
+            <img src="content_copy.svg" alt="Copiar código">
           </button>
           <button class="icon-btn stx-icon-btn delete" type="button" data-stx-action="delete" data-stx-id="${escAttr(item.id)}" aria-label="Eliminar código">
-            <img src="" alt="Eliminar código">
+            <img src="iconos/delete_24dp_FF0000_FILL0_wght400_GRAD0_opsz24.svg" alt="Eliminar código">
           </button>
         </div>
       </div>
