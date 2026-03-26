@@ -1949,10 +1949,16 @@ h1 {
   .item {
     display: flex;
     justify-content: center;
-    width: 40px;
+    align-items: center;
+    width: auto;
     height: 48px;
     padding: 0 10px;
     border: 3px solid transparent;
+  }
+
+  .iconos-de-navegacion {
+    margin-left: 0px;
+    padding: 0px 7px;
   }
 
   .contenitux {
@@ -2514,7 +2520,7 @@ h1 {
 .library-modal {
   width: min(340px, calc(100vw - 32px));
   background: #111;
-  border: 1px solid #bbb;
+  border: 3px solid #0ff;
   border-radius: 20px;
   padding: 16px;
   color: #bbb;
@@ -2534,6 +2540,7 @@ h1 {
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: 0.3s;
+  font-family: ubuntu;
 }
 
 .tab.active {
