@@ -380,40 +380,46 @@
       "link": "https://statux.gumroad.com/l/jcpkei",
       "blocks": [
         {
-          "title": "1. ANTES DE HABLAR, YA ESTÁS SIENDO LEÍDO",
-          "text1": "Tu cerebro no analiza; clasifica. En menos de dos segundos, el entorno decide si eres una autoridad, una amenaza o alguien irrelevante. Esta decisión ocurre en el subconsciente, mucho antes de que abras la boca.\n\nEste fenómeno se llama *thin-slicing*: el cerebro toma una muestra mínima de tu energía y construye una historia completa sobre quién eres. Si no controlas esa muestra, el algoritmo social escribirá la historia por ti.",
-          "text2": "Este Ebóotux es el manual para hacer visible lo que proyectas sin saberlo. No vamos a estudiar teoría por curiosidad; vamos a entender el sistema para que dejes de ser un civil y te conviertas en un operador de tu propia presencia.",
-          "img": "", "video": ""
-        },
-        {
-          "title": "2. EL ALGORITMO DE PERCEPCIÓN SOCIAL",
-          "text1": "El cerebro es un detector de patrones. No busca la verdad, busca coherencia. Si tu entrada es débil, tus palabras —por brillantes que sean— serán filtradas como 'ruido'.\n\n- **Efecto Halo:** Una sola señal de poder al inicio blindará el resto de tu interacción.\n- **Sesgo de Confirmación:** Si entras perdiendo, la mente del otro buscará pruebas para hundirte. Si entras ganando, ignorará tus fallos.\n- **Dominio del Espacio:** El estatus se mide en metros cuadrados. Quien se expande, manda; quien se encoge, obedece.",
-          "text2": "REGLA DE ORO: La percepción es la única realidad que importa en el primer encuentro. Si no diseñas tu imagen, el algoritmo de los demás la diseñará por ti.",
-          "img": "", "video": ""
-        },
-        {
-          "title": "3. PROTOCOLOS DE ENTRADA: LOS PRIMEROS 5 METROS",
-          "text1": "La reunión empieza 5 metros antes del pomo de la puerta. Es la 'Zona de Escaneo'. Entrar no es transportarse, es invadir. \n\n- **El Reset Pre-Entrada:** Hombros atrás, exhala y visualiza que el espacio ya te pertenece. La prisa es para los subordinados.\n- **La Cadencia de Poder:** Camina como si el aire fuera denso. Un ritmo deliberado comunica que tú dictas el tiempo de la sala.",
-          "text2": "CHECKLIST DE INVASIÓN:\n⚫ **Barrido Visual:** Escanea la sala horizontalmente. Tú evalúas el lugar, no al revés.\n⚫ **Mano Derecha Libre:** Carga todo con la izquierda. Tu mano de impacto debe estar lista, seca y disponible.\n⚫ **Ángulo de Abordaje:** No choques de frente; entra con un ángulo ligero para proyectar seguridad sin agresividad innecesaria.",
-          "img": "", "video": ""
-        },
-        {
-          "title": "4. MICRO-COMPORTAMIENTOS DE SABOTAJE",
-          "text1": "La presencia no se destruye con errores grandes, se desangra por fugas pequeñas. Estos son gestos automáticos de alivio de tensión que el cerebro del otro interpreta como debilidad.\n\n- **El Pacificador:** Reírte después de decir algo serio (buscas permiso).\n- **Refugio Digital:** Sacar el móvil por incomodidad social (falta de temple).\n- **Explicación Infinita:** Justificar tus opiniones (miedo al juicio).",
-          "text2": "Estos gestos son 'Ruido'. Cada vez que cometes uno, tu autoridad cae un 10%. En este bloque aprenderás a identificarlos antes de que ocurran.",
-          "img": "", "video": ""
-        },
-        {
-          "title": "5. PROTOCOLO DE EXTRACCIÓN (LIMPIEZA DE RUIDO)",
-          "text1": "Saber que fallas es el diagnóstico; corregirlo es la cirugía. La quietud es el lenguaje del estatus alto. \n\n**La Regla de los 2 Segundos:**\n1. Pausa antes de hablar.\n2. Sostén el contacto visual al terminar.\n3. Silencio total ante una pregunta difícil.",
-          "text2": "ENTRENAMIENTO: Elige tu 'Fuga Maestra' y etiquétala mentalmente como 'Ruido Detectado'. Sustituye el movimiento nervioso por 'Peso Físico': siente tus pies en el suelo y tus palmas en la mesa. La maestría es que nadie huela tu inquietud.",
-          "img": "", "video": ""
-        },
-        {
-          "title": "6. PROTOCOLOS PRÁCTICOS: EL MUNDO REAL",
-          "text1": "Simulación final. Aquí es donde el software se pone a prueba bajo fuego.\n\n- **Escenario A (Networking):** Quédate solo en el centro de la sala 5 segundos sin hacer nada. Domina la incomodidad.\n- **Escenario B (Reuniones):** Si te interrumpen, guarda silencio y sostén la mirada 2 segundos. Recupera el marco sin gritar.",
-          "text2": "Presentar a tu 'Otro Yo' no es un disfraz; es eliminar lo que te sobra. La presencia empieza cuando dejas de pedir permiso para existir. Sal ahí fuera y toma lo que es tuyo.",
-          "img": "", "video": ""
+      "title": "ANTES DE HABLAR, YA ESTÁS SIENDO LEÍDO",
+      "text1": "Tu cerebro no analiza, clasifica. En menos de dos segundos, el entorno decide si eres una autoridad, una amenaza o alguien irrelevante. Esta decisión ocurre en el subconsciente, mucho antes de que abras la boca.\n\nEste fenómeno se llama *thin-slicing*: el cerebro toma una muestra mínima de tu energía y construye una historia completa sobre quién eres. Si no controlas esa muestra, el algoritmo social escribe la historia por ti. Y lo peor no es que te juzguen. Lo peor es que ni siquiera sepas que ya perdiste.",
+      "text2": "Este Ebootux es el manual para hacer visible lo que proyectas sin saberlo. No es teoría por curiosidad. Es entender el sistema para dejar de ser un civil y convertirte en un operador de tu propia presencia. El que entiende cómo funciona el juego, no solo juega. Dirige.",
+      "img": "",
+      "video": ""
+    },
+    {
+      "title": "EL ALGORITMO DE PERCEPCIÓN SOCIAL",
+      "text1": "El cerebro es un detector de patrones. No busca la verdad, busca coherencia. Si tu entrada es débil, tus palabras —por brillantes que sean— serán filtradas como ruido.\n\n- **Efecto Halo:** Una sola señal de poder al inicio blindará el resto de tu interacción. Un aura fuerte al entrar compra crédito suficiente para sobrevivir errores que a otros les costarían todo.\n- **Sesgo de Confirmación:** Si entras perdiendo, la mente del otro busca pruebas para hundirte. Si entras ganando, ignorará tus fallos. La percepción tiene memoria selectiva.\n- **Dominio del Espacio:** El estatus se mide en metros cuadrados. Quien se expande, manda. Quien se encoge, obedece. No necesitas dinero ni título para ocupar una sala. Necesitas decisión.",
+      "text2": "REGLA DE ORO: La percepción es la única realidad que importa en el primer encuentro. No existe la segunda primera impresión. Si no diseñas tu imagen antes de entrar, el algoritmo mental de los demás la diseñará por ti. Y ese diseño no suele ser favorable.",
+      "img": "",
+      "video": ""
+    },
+    {
+      "title": "PROTOCOLOS DE ENTRADA — LOS PRIMEROS 5 METROS",
+      "text1": "La reunión empieza 5 metros antes del pomo de la puerta. Eso es la Zona de Escaneo. Entrar no es transportarse de un lado a otro. Es invadir con intención.\n\n- **El Reset Pre-Entrada:** Hombros atrás, exhala despacio, visualiza que el espacio ya te pertenece. La prisa es un símbolo de subordinación.\n- **La Cadencia de Poder:** Camina como si el aire fuera denso. Un ritmo deliberado comunica que tú dictas el tiempo de la sala, no al revés.\n- **La Pausa Calculada:** Antes de hablar con alguien, medio segundo de silencio. No nervioso. Intencional. La pausa da peso.",
+      "text2": "CHECKLIST DE INVASIÓN:\n⚫ **Barrido Visual:** Escanea la sala horizontalmente al entrar. Tú evalúas el lugar, no al revés.\n⚫ **Mano Derecha Libre:** Carga todo con la izquierda. Tu mano de impacto debe estar seca, lista y disponible.\n⚫ **Ángulo de Abordaje:** No entres de frente como choque. Un ángulo ligero proyecta seguridad sin agresividad. La diferencia es sutil. El efecto no.",
+      "img": "",
+      "video": ""
+    },
+    {
+      "title": "MICRO-COMPORTAMIENTOS DE SABOTAJE",
+      "text1": "La presencia no se destruye con errores grandes. Se desangra por fugas pequeñas. Son gestos automáticos de alivio de tensión que el cerebro del otro interpreta como debilidad sin que nadie lo decida conscientemente.\n\n- **El Pacificador:** Reírte después de decir algo serio. Buscas permiso para existir en ese espacio.\n- **Refugio Digital:** Sacar el móvil por incomodidad social. Le dice a la sala que no tienes temple para sostener el vacío.\n- **Explicación Infinita:** Justificar tus opiniones cuando nadie te las pidió. El estatus alto no se defiende. Se sostiene.\n- **El Asentidor Compulsivo:** Aprobar con la cabeza mientras alguien habla, sin parar. Comunica ansiedad de aprobación.",
+      "text2": "Estos gestos son 'Ruido'. Cada uno erosiona tu autoridad en tiempo real. Lo más peligroso no es que los hagas. Es que los haces sin saberlo. En este bloque aprenderás a identificarlos antes de que ocurran, porque el error que no ves es el error que te controla.",
+      "img": "",
+      "video": ""
+    },
+    {
+      "title": "PROTOCOLO DE EXTRACCIÓN — LIMPIEZA DE RUIDO",
+      "text1": "Saber que fallas es el diagnóstico. Corregirlo es la cirugía. La quietud es el lenguaje del estatus alto. Y la quietud no es ausencia de movimiento. Es presencia sin necesidad.\n\n**La Regla de los 2 Segundos:**\n1. Pausa antes de hablar. No porque no sabes qué decir. Porque puedes.\n2. Sostén el contacto visual al terminar de hablar. No lo rompas tú primero.\n3. Silencio total ante una pregunta difícil. El que aguanta el silencio, controla el marco.",
+      "text2": "ENTRENAMIENTO: Elige tu fuga maestra —el gesto de ansiedad que más repites— y etiquétala mentalmente como 'Ruido Detectado'. Cada vez que la detectes, sustitúyela por Peso Físico: siente tus pies en el suelo, tus palmas sobre la superficie. La maestría no es eliminar la inquietud. Es que nadie pueda olerla.",
+      "img": "",
+      "video": ""
+    },
+    {
+      "title": "PROTOCOLOS PRÁCTICOS — EL MUNDO REAL",
+      "text1": "La teoría sin aplicación es entretenimiento. Aquí el software se prueba bajo fuego real.\n\n- **Escenario A — Networking:** Quédate solo en el centro de la sala 5 segundos sin hacer nada. Sin mirar el teléfono. Sin simular que buscas a alguien. Domina la incomodidad. Eso solo ya reposiciona cómo te perciben.\n- **Escenario B — Reuniones:** Si te interrumpen, guarda silencio y sostén la mirada dos segundos. Recupera el marco sin elevar la voz. El que grita ya perdió.\n- **Escenario C — Conocidos nuevos:** No te presentes explicando lo que haces. Preséntate con criterio. 'Trabajo en X' es diferente a 'Me dedico a X porque creo que...' El primero informa. El segundo posiciona.",
+      "text2": "Presentar a tu otro yo no es ponerte una máscara. Es quitarte lo que te sobra. La presencia real comienza cuando dejas de pedir permiso para estar en el espacio. Todo lo que hay aquí es el mapa. Pero el territorio es tuyo.",
+      "img": "",
+      "video": ""
         }
       ]
     }
