@@ -1,0 +1,10 @@
+.home-loading,
+.home-loading-error {
+  margin: 24px 0;
+  text-align: center;
+  color: #777;
+}
+
+.home-loading-error {
+  color: #ff5a5a;
+}
