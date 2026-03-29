@@ -43,6 +43,60 @@ function setupBentoPointerGlow() {
   });
 }
 
+function setupExploreWindow() {
+  const root = document.querySelector('[data-home-root]');
+  if (!root) return;
+  const tabs = root.querySelectorAll('.explore-window');
+  const title = root.querySelector('#title');
+  const text1 = root.querySelector('#text1');
+  const text2 = root.querySelector('#text2');
+  if (!tabs.length || !title || !text1 || !text2) return;
+
+  const content = {
+    systux: {
+      title: 'Systux',
+      text1: 'Sistemas interactivos diseñados para ejecutarse, no solo leerse.',
+      text2: 'Experiencias dinámicas con lógica propia que elevan el nivel del usuario.'
+    },
+    templux: {
+      title: 'Templux',
+      text1: 'Estructuras listas para usar sin fricción.',
+      text2: 'Plantillas inteligentes que convierten ideas en productos rápidos.'
+    }
+  };
+
+  let current = 'systux';
+  let interval;
+
+  const switchTab = (tab) => {
+    const block = content[tab];
+    if (!block) return;
+    current = tab;
+    title.textContent = block.title;
+    text1.textContent = block.text1;
+    text2.textContent = block.text2;
+    tabs.forEach((btn) => btn.classList.toggle('active', btn.dataset.tab === tab));
+  };
+
+  const startAutoSwitch = () => {
+    clearInterval(interval);
+    interval = setInterval(() => {
+      current = current === 'systux' ? 'templux' : 'systux';
+      switchTab(current);
+    }, 4000);
+  };
+
+  tabs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tab);
+      startAutoSwitch();
+    });
+  });
+
+  switchTab(current);
+  startAutoSwitch();
+}
+
 async function loadHomeNovedades() {
   const cards = document.querySelectorAll('[data-home-root] .statux-card');
   if (!cards.length) return;
@@ -101,6 +155,7 @@ async function loadHomeSection() {
     setupHomeScanner();
     setupBentoPointerGlow();
     await loadHomeNovedades();
+    setupExploreWindow();
     setFooterReadyState(true);
   } catch (error) {
     target.innerHTML = '<p class="home-loading-error">No se pudo cargar la sección Home.</p>';
