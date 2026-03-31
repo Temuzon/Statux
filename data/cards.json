@@ -132,16 +132,16 @@
       "blocks": []
     },
     {
-      "type": "",
-      "section": "",
-      "title": "Psicología Oscura",
+      "type": "getux",
+      "section": "getux",
+      "title": "Domina el storytelling",
       "subtitle": "",
       "code": "",
       "price": "",
       "image": "",
-      "description": "Este Getux no está aquí para convertirte en alguien que no eres. Está aquí para ayudarte a dejar de sabotearte y empezar a jugar en tu mejor nivel.",
-      "yes": "✔ Acceso inmediato",
-      "no": "❌ Videos,❌ Imagenes,❌ Archivo descargable",
+      "description": "",
+      "yes": "✔ ,✔ ,✔ ",
+      "no": "❌ ,❌ ,❌ ",
       "link": "#",
       "blocks": [
         {
