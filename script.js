@@ -238,6 +238,43 @@ function sectionContainer(section) {
   return $(`.contenedor-de-todos-los-${section}`) || $(`[data-json-section="${section}"]`);
 }
 
+let lazyAnimationObserver = null;
+
+function initLazyAnimationObserver() {
+  if (lazyAnimationObserver) return lazyAnimationObserver;
+  lazyAnimationObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("activo");
+      lazyAnimationObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.15 });
+  return lazyAnimationObserver;
+}
+
+function observeLazyAnimations(root = document) {
+  const observer = initLazyAnimationObserver();
+  const selectors = [
+    ".ebootux-cards",
+    ".getux-cards",
+    ".plantitux-cards",
+    ".movitux-cards",
+    ".tracktux-cards",
+    ".mindtux-cards",
+    ".soundtux-cards",
+    ".marketux-cards",
+    ".empaquetux-cards",
+    ".ebootux-block",
+    ".statux-card"
+  ];
+
+  root.querySelectorAll(selectors.join(",")).forEach((element) => {
+    if (element.classList.contains("animar") && element.classList.contains("activo")) return;
+    element.classList.add("animar");
+    observer.observe(element);
+  });
+}
+
 function renderProducts(products) {
   const knownSections = ["ebootux", "getux", "plantitux", "movitux"];
   knownSections.forEach((section) => {
@@ -264,6 +301,7 @@ function renderProducts(products) {
     }).join("\n");
   });
 
+  observeLazyAnimations(document);
 }
 
 
@@ -794,6 +832,10 @@ document.addEventListener("click", async function (e) {
   if (e.target.closest(".ebootux-exit-btn")) {
     const ebootux = document.querySelector(".ebootux-template");
     if (!ebootux) return;
+    if (typeof ebootuxHeaderCleanup === "function") {
+      ebootuxHeaderCleanup();
+      ebootuxHeaderCleanup = null;
+    }
 
     ebootux.classList.add("hidden");
     ebootux.classList.remove("active");
@@ -915,6 +957,7 @@ function initSettingsSystem() {
 
 function markBodyLoaded() {
   document.body.classList.add("loaded");
+  observeLazyAnimations(document);
 }
 
 if (document.readyState !== "loading") {
@@ -923,6 +966,8 @@ if (document.readyState !== "loading") {
   document.addEventListener("DOMContentLoaded", markBodyLoaded, { once: true });
 }
 window.addEventListener("load", markBodyLoaded, { once: true });
+
+let ebootuxHeaderCleanup = null;
 
 function cargarEbootuxDesdeCard(card) {
   const ebootux = document.querySelector(".ebootux-template");
@@ -933,9 +978,12 @@ function cargarEbootuxDesdeCard(card) {
 
   const h1 = ebootux.querySelector("[data-ebootux-h1]");
   const subtitle = ebootux.querySelector("[data-ebootux-subtitle]");
+  const headerTitle = ebootux.querySelector("[data-ebootux-header-title]");
+  const titulo = card.dataset.ebootuxTitle || "";
 
-  if (h1) h1.textContent = card.dataset.ebootuxTitle || "";
+  if (h1) h1.textContent = titulo;
   if (subtitle) subtitle.textContent = card.dataset.ebootuxSubtitle || "";
+  if (headerTitle) headerTitle.textContent = titulo;
 
   content.innerHTML = "";
 
@@ -947,6 +995,7 @@ function cargarEbootuxDesdeCard(card) {
     .filter(n => n !== null);
 
   const totalBlocks = blockNumbers.length ? Math.max(...blockNumbers) : 0;
+  const blockTitlesForRange = [];
 
   for (let i = 1; i <= totalBlocks; i++) {
     const clone = template.content.cloneNode(true);
@@ -964,6 +1013,10 @@ function cargarEbootuxDesdeCard(card) {
     const mediaContainer = clone.querySelector("[data-media-container]");
     const imgTag = clone.querySelector("[data-media-img]");
     const videoTag = clone.querySelector("[data-media-video]");
+    const article = clone.querySelector("article");
+
+    if (article) article.dataset.blockIndex = String(i);
+    blockTitlesForRange.push(title || `Bloque ${i}`);
 
     if (h2) {
       if (title) { h2.textContent = title; h2.style.display = "block"; }
@@ -1001,6 +1054,10 @@ function cargarEbootuxDesdeCard(card) {
     if (mediaContainer) mediaContainer.hidden = !hayMedia;
     content.appendChild(clone);
   }
+
+  ebootux.dataset.blockTitles = JSON.stringify(blockTitlesForRange);
+  ebootux.dataset.totalBlocks = String(totalBlocks);
+  observeLazyAnimations(ebootux);
 }
 
 function toggleFooterVisibility(show) {
@@ -1026,6 +1083,100 @@ function entrarEnEbootux() {
   navigationLocked = true;
   toggleFooterVisibility(false);
   window.scrollTo({ top: 0, behavior: "smooth" });
+  initEbootuxHeader();
+}
+
+function initEbootuxHeader() {
+  const ebootux = document.querySelector(".ebootux-template");
+  if (!ebootux) return;
+
+  if (typeof ebootuxHeaderCleanup === "function") {
+    ebootuxHeaderCleanup();
+    ebootuxHeaderCleanup = null;
+  }
+
+  const progressFill = document.getElementById("ebootuxProgressFill");
+  const navBtn = document.getElementById("ebootuxNavBtn");
+  const navPanel = document.getElementById("ebootuxNavPanel");
+  const range = document.getElementById("ebootuxRange");
+  const rangeNum = document.getElementById("ebootuxRangeNum");
+  const navTarget = document.getElementById("ebootuxNavTarget");
+  const content = document.getElementById("ebootux-content");
+  const settingsOpenBtn = document.getElementById("ebootuxSettingsBtn");
+
+  const totalBlocks = parseInt(ebootux.dataset.totalBlocks || "0", 10);
+  const safeTotal = Math.max(totalBlocks, 1);
+  let blockTitles = [];
+  try {
+    blockTitles = JSON.parse(ebootux.dataset.blockTitles || "[]");
+  } catch (_) {
+    blockTitles = [];
+  }
+
+  if (range) {
+    range.min = "1";
+    range.max = String(safeTotal);
+    range.value = "1";
+  }
+  if (rangeNum) rangeNum.textContent = `1 / ${safeTotal}`;
+  if (navTarget) navTarget.textContent = blockTitles[0] || `Bloque 1`;
+  if (progressFill) progressFill.style.width = "0%";
+  if (navPanel) navPanel.classList.add("hidden");
+  if (navBtn) {
+    navBtn.classList.remove("active");
+    navBtn.setAttribute("aria-expanded", "false");
+  }
+
+  const handleNavToggle = () => {
+    if (!navPanel || !navBtn) return;
+    const isHidden = navPanel.classList.contains("hidden");
+    navPanel.classList.toggle("hidden", !isHidden);
+    navBtn.classList.toggle("active", isHidden);
+    navBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
+  };
+
+  const handleRangeInput = () => {
+    if (!range) return;
+    const val = parseInt(range.value, 10) || 1;
+    if (rangeNum) rangeNum.textContent = `${val} / ${safeTotal}`;
+    if (navTarget) navTarget.textContent = blockTitles[val - 1] || `Bloque ${val}`;
+
+    const allBlocks = content?.querySelectorAll(".ebootux-block");
+    allBlocks?.forEach((block) => block.classList.remove("ebootux-block--target"));
+    const target = content?.querySelector(`[data-block-index="${val}"]`);
+    if (target) {
+      target.classList.add("ebootux-block--target");
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    if (progressFill) progressFill.style.width = `${Math.round((val / safeTotal) * 100)}%`;
+  };
+
+  const onScroll = () => {
+    const doc = document.scrollingElement || document.documentElement;
+    const scrolled = doc.scrollTop;
+    const total = doc.scrollHeight - doc.clientHeight;
+    const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+    if (progressFill) progressFill.style.width = `${pct}%`;
+  };
+
+  const handleSettingsOpen = () => {
+    const mainSettingsBtn = document.querySelector(".floating-btn.settings-btn");
+    mainSettingsBtn?.click();
+  };
+
+  navBtn?.addEventListener("click", handleNavToggle);
+  range?.addEventListener("input", handleRangeInput);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  settingsOpenBtn?.addEventListener("click", handleSettingsOpen);
+
+  ebootuxHeaderCleanup = () => {
+    navBtn?.removeEventListener("click", handleNavToggle);
+    range?.removeEventListener("input", handleRangeInput);
+    settingsOpenBtn?.removeEventListener("click", handleSettingsOpen);
+    window.removeEventListener("scroll", onScroll);
+    if (progressFill) progressFill.style.width = "0%";
+  };
 }
 
 // ===============================

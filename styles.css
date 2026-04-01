@@ -88,6 +88,17 @@ body.loaded {
   margin: 0;
 }
 
+.animar {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.animar.activo {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .statux-path {
   fill: none;
   stroke: #fff;
@@ -1745,9 +1756,170 @@ h1 {
   color: #fff;
   width: 100%;
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 0 20px 40px;
   box-sizing: border-box;
   font-family: 'ubuntu';
+}
+
+.ebootux-header-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #111;
+  border-bottom: 1px solid #1f1f1f;
+  padding: 0 16px;
+  height: 56px;
+}
+
+.ebootux-header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ebootux-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ebootux-header-bar .ebootux-exit-btn {
+  position: static;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.3s;
+}
+
+.ebootux-header-bar .ebootux-exit-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.ebootux-nav-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  transition: border-color 0.3s, color 0.3s;
+  flex-shrink: 0;
+}
+
+.ebootux-nav-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ebootux-header-bar .ebootux-cfg-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.3s;
+}
+
+.ebootux-header-bar .ebootux-cfg-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.ebootux-nav-btn.active {
+  border-color: #0ff;
+  color: #0ff;
+}
+
+.ebootux-progress-track {
+  position: sticky;
+  top: 56px;
+  z-index: 499;
+  height: 2px;
+  background: #1a1a1a;
+}
+
+.ebootux-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #00ffff;
+  border-radius: 1px;
+  transition: width 0.2s ease;
+}
+
+.ebootux-nav-panel {
+  position: sticky;
+  top: 58px;
+  z-index: 498;
+  background: #0d0d0d;
+  border-bottom: 1px solid #1a1a1a;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ebootux-nav-panel.hidden {
+  display: none;
+}
+
+.ebootux-nav-label {
+  font-size: 11px;
+  color: #444;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ebootux-nav-target {
+  font-size: 13px;
+  color: #00ffff;
+  min-height: 18px;
+  font-weight: 500;
+}
+
+.ebootux-nav-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ebootux-range {
+  flex: 1;
+  accent-color: #00ffff;
+  cursor: pointer;
+}
+
+.ebootux-range-num {
+  font-size: 12px;
+  color: #555;
+  min-width: 42px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .ebootux-hero {
@@ -1813,6 +1985,23 @@ h1 {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+  .ebootux-header-title {
+    font-size: 13px;
+  }
+
+  .ebootux-header-bar {
+    padding: 0 10px;
+    height: 50px;
+  }
+
+  .ebootux-progress-track {
+    top: 50px;
+  }
+
+  .ebootux-nav-panel {
+    top: 52px;
+  }
+
   .ebootux-hero {
     padding: 28px;
   }
@@ -1867,19 +2056,20 @@ h1 {
 }
 
 .ebootux-exit-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
   background: transparent;
   border: 3px solid #0ff;
   border-radius: 12px;
   padding: 6px;
   cursor: pointer;
-  z-index: 9999;
 }
 
 .ebootux-exit-btn img {
   width: 32px;
+}
+
+.ebootux-block.ebootux-block--target {
+  border-color: rgba(0, 255, 255, 0.2);
+  transition: border-color 0.4s ease;
 }
 
 
@@ -2109,7 +2299,7 @@ h1 {
 
   .ebootux-exit-btn {
     right: auto;
-  }    
+  }
 
   /* Footer */
   footer {
@@ -2203,6 +2393,15 @@ h1 {
     margin: auto
   }
 
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ebootux-header-bar .ebootux-exit-btn:hover,
+  .ebootux-header-bar .ebootux-cfg-btn:hover,
+  .ebootux-nav-btn:hover {
+    border-color: #0ff;
+    color: #0ff;
+  }
 }
   
   
