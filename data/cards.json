@@ -1,13 +1,13 @@
 {
   "products": [
     {
-      "type": "",
-      "section": "",
+      "type": "plantitux",
+      "section": "plantitux",
       "title": "Plantitux Dark Landing",
-      "prompt": "Crea una landing page oscura, minimalista y elegante para un producto digital premium llamado Statux. Usa tipografía sans-serif, alto contraste, animaciones sutiles y jerarquía visual clara.",
+      "prompt": "",
       "code": "STATUX-1234",
-      "price": "4.99",
-      "image": "portadas/core----img.jpeg",
+      "price": "",
+      "image": "",
       "previewVideo": ""
     },
     {
@@ -424,7 +424,7 @@
     {
       "type": "Getux",
       "section": "Getux",
-      "title": "calistenia",
+      "title": "Calistenia 2.0",
       "subtitle": "",
       "code": "12345-",
       "price": "",
