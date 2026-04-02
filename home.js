@@ -198,6 +198,103 @@ async function loadHomeSection() {
   }
 }
 
+
+
+// === STATUX MODALES: Offline y Confirmación ===
+(function(){
+  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  // 1. OFFLINE MODAL
+  ready(() => {
+    const btnAdvanced = document.getElementById('settingsAdvancedBtn');
+    const offlineModal = document.getElementById('stx-offline-modal');
+    const btnClose = document.getElementById('stx-offline-close');
+    const overlay = offlineModal?.querySelector('.stx-modal-overlay');
+    const chk = document.getElementById('stx-offline-toggle');
+    // Limpia eventos
+    if (btnAdvanced) {
+      btnAdvanced.replaceWith(btnAdvanced.cloneNode(true));
+    }
+    const btnAdv = document.getElementById('settingsAdvancedBtn');
+    btnAdv?.addEventListener('click', (e)=>{
+      e.preventDefault();
+      offlineModal.classList.remove('stx-invisible');
+      setTimeout(()=>offlineModal.classList.add('stx-active'),10);
+    });
+    function closeOfflineModal() {
+      offlineModal.classList.remove('stx-active');
+      setTimeout(()=>offlineModal.classList.add('stx-invisible'),170);
+    }
+    btnClose?.addEventListener('click', closeOfflineModal);
+    overlay?.addEventListener('click', closeOfflineModal);
+    chk?.addEventListener('change', function(e){
+      const enabled = !!e.target.checked;
+      localStorage.setItem('stx:offline-mode', enabled ? '1' : '0');
+    });
+    if(chk) chk.checked = localStorage.getItem('stx:offline-mode') === '1';
+    document.addEventListener('keydown',function(e){
+      if (e.key === 'Escape' && offlineModal.classList.contains('stx-active')) {
+        closeOfflineModal();
+      }
+    });
+  });
+
+  // 2. MODAL CONFIRMACIÓN ELIMINAR CÓDIGO
+  ready(() => {
+    const confirmModal = document.getElementById('stx-confirm-modal');
+    const btnClose = document.getElementById('stx-confirm-close');
+    const overlay = confirmModal?.querySelector('.stx-modal-overlay');
+    const btnCancel = document.getElementById('stx-confirm-cancel');
+    const btnAccept = document.getElementById('stx-confirm-accept');
+    let confirmDeleteCodeId = null;
+    const codesContainer = document.getElementById('codes');
+    if (codesContainer) {
+      codesContainer.addEventListener('click', function(ev) {
+        const btnDel = ev.target.closest('.stx-icon-btn.delete,.icon-btn.delete');
+        if (!btnDel) return;
+        const id = btnDel.getAttribute('data-stx-id');
+        ev.preventDefault();
+        openConfirmModal(id);
+      });
+    }
+    function openConfirmModal(codeId) {
+      confirmDeleteCodeId = codeId;
+      confirmModal.classList.remove('stx-invisible');
+      setTimeout(()=>confirmModal.classList.add('stx-active'),10);
+    }
+    function closeConfirmModal() {
+      confirmModal.classList.remove('stx-active');
+      setTimeout(()=>confirmModal.classList.add('stx-invisible'),180);
+      confirmDeleteCodeId = null;
+    }
+    btnClose?.addEventListener('click', closeConfirmModal);
+    btnCancel?.addEventListener('click', closeConfirmModal);
+    overlay?.addEventListener('click', closeConfirmModal);
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && confirmModal.classList.contains('stx-active')) {
+        closeConfirmModal();
+      }
+    });
+    btnAccept?.addEventListener('click', function(){
+      if (!confirmDeleteCodeId) return closeConfirmModal();
+      if (window.stxRuntime && typeof stxRuntime !== 'undefined') {
+        if(stxRuntime.stxStorage) {
+          stxRuntime.stxStorage.deleteCode(confirmDeleteCodeId);
+          if (typeof stxRuntime.stxRenderCodes === "function") stxRuntime.stxRenderCodes();
+        } else if(stxRuntime.deleteCode && typeof stxRuntime.deleteCode === 'function') {
+          stxRuntime.deleteCode(confirmDeleteCodeId);
+          if (stxRuntime.renderCodes) stxRuntime.renderCodes();
+        }
+      }
+      const codesContainer = document.getElementById('codes');
+      if (codesContainer) {
+        const el = codesContainer.querySelector(`[data-stx-id=\"${confirmDeleteCodeId}\"]`);
+        if(el) el.remove();
+      }
+      closeConfirmModal();
+    });
+  });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   setFooterReadyState(false);
   loadHomeSection();
