@@ -30,6 +30,7 @@ const sections = $all(".app-section");
 let navigationLocked = false;
 let lastSectionBeforeEbootux = "Home";
 let currentCardSlug = "";
+let syncingSectionFromHistory = false;
 
 items.forEach(item => {
   item.addEventListener("click", () => {
@@ -83,7 +84,8 @@ function updateNavActiveForSection(id) {
   });
 }
 
-function showSection(id) {
+function showSection(id, options = {}) {
+  const { updateUrl = true, replaceUrl = false } = options;
   sections.forEach(section => section.classList.remove("active-section"));
   const target = document.getElementById(id);
   if (target) {
@@ -91,7 +93,9 @@ function showSection(id) {
     mezclarCardsEnSeccion(target);
   }
   updateNavActiveForSection(id);
-  setUrlState({ section: id, keepCard: false, keepModal: false, replace: true });
+  if (updateUrl && !syncingSectionFromHistory) {
+    setUrlState({ section: id, keepCard: false, keepModal: false, replace: replaceUrl });
+  }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -159,8 +163,18 @@ document.addEventListener("click", (e) => {
   navigateInternalLink(anchor, url);
 });
 
+function syncSectionFromLocation() {
+  const sectionFromHash = (window.location.hash || "#Home").replace("#", "") || "Home";
+  if (!document.getElementById(sectionFromHash)) return;
+  syncingSectionFromHistory = true;
+  showSection(sectionFromHash, { updateUrl: false });
+  syncingSectionFromHistory = false;
+}
+
 const initialSection = (window.location.hash || "#Home").replace("#", "") || "Home";
-showSection(initialSection);
+showSection(initialSection, { updateUrl: false });
+window.addEventListener("popstate", syncSectionFromLocation);
+window.addEventListener("hashchange", syncSectionFromLocation);
 
 // ============================
 // RENDER DINÁMICO DESDE JSON
@@ -1754,10 +1768,7 @@ const stxRuntime = (() => {
     });
 
     stxBindPseudoButton(stxUi.advancedItem, () => {
-      const offlineModal = document.getElementById("stx-offline-modal");
-      if (!offlineModal) {
-        mostrarModal("Avanzado", "Seguimos con esta parte en el siguiente paso.");
-      }
+      // La apertura del modal offline se gestiona por delegación en home.js.
     });
 
     stxBindPseudoButton(stxUi.fontItem, () => {
