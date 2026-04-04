@@ -900,6 +900,7 @@ document.addEventListener("click", async function (e) {
     document.querySelector(".floating-container")?.classList.remove("ebootux-floating-visible");
     navigationLocked = false;
     toggleFooterVisibility(true);
+    setUrlState({ section: lastSectionBeforeEbootux || "Home", keepCard: false, keepModal: false, replace: true });
     showSection(lastSectionBeforeEbootux || "Home");
   }
 });
@@ -1142,6 +1143,7 @@ function entrarEnEbootux() {
   navigationLocked = true;
   document.body.classList.add("in-ebootux");
   toggleFooterVisibility(false);
+  setUrlState({ section: "ebootux-template", card: currentCardSlug || null, keepModal: false, replace: false });
   window.scrollTo({ top: 0, behavior: "smooth" });
   initEbootuxHeader();
 }
