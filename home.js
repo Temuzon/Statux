@@ -202,7 +202,6 @@ async function loadHomeSection() {
 
 // === STATUX MODALES: Offline y Confirmación ===
 (function(){
-  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
   // 1. OFFLINE MODAL
   function ensureOfflineModal() {
     let modal = document.getElementById('stx-offline-modal');
@@ -286,13 +285,8 @@ async function loadHomeSection() {
     let confirmDeleteCodeId = null;
     const codesContainer = document.getElementById('codes');
     if (codesContainer) {
-      codesContainer.addEventListener('click', function(ev) {
-        const btnDel = ev.target.closest('.stx-icon-btn.delete,.icon-btn.delete');
-        if (!btnDel) return;
-        const id = btnDel.getAttribute('data-stx-id');
-        ev.preventDefault();
-        openConfirmModal(id);
-      });
+      const el = codesContainer.querySelector(`[data-stx-id=\"${confirmDeleteCodeId}\"]`);
+      if(el) el.remove();
     }
     function openConfirmModal(codeId) {
       confirmDeleteCodeId = codeId;
@@ -310,32 +304,15 @@ async function loadHomeSection() {
       url.searchParams.delete('modal');
       window.history.replaceState({}, '', url);
     }
-    btnClose?.addEventListener('click', closeConfirmModal);
-    btnCancel?.addEventListener('click', closeConfirmModal);
-    overlay?.addEventListener('click', closeConfirmModal);
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape' && confirmModal.classList.contains('stx-active')) {
-        closeConfirmModal();
-      }
-    });
-    btnAccept?.addEventListener('click', function(){
-      if (!confirmDeleteCodeId) return closeConfirmModal();
-      if (window.stxRuntime && typeof stxRuntime !== 'undefined') {
-        if(stxRuntime.stxStorage) {
-          stxRuntime.stxStorage.deleteCode(confirmDeleteCodeId);
-          if (typeof stxRuntime.stxRenderCodes === "function") stxRuntime.stxRenderCodes();
-        } else if(stxRuntime.deleteCode && typeof stxRuntime.deleteCode === 'function') {
-          stxRuntime.deleteCode(confirmDeleteCodeId);
-          if (stxRuntime.renderCodes) stxRuntime.renderCodes();
-        }
-      }
-      const codesContainer = document.getElementById('codes');
-      if (codesContainer) {
-        const el = codesContainer.querySelector(`[data-stx-id=\"${confirmDeleteCodeId}\"]`);
-        if(el) el.remove();
-      }
+    if (e.target.closest('#stx-confirm-accept')) {
+      acceptConfirmDelete();
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    const confirmModal = getConfirmModal();
+    if (e.key === 'Escape' && confirmModal?.classList.contains('stx-active')) {
       closeConfirmModal();
-    });
+    }
   });
 })();
 
