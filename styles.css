@@ -1858,7 +1858,7 @@ h1 {
 
 .ebootux-template.header-floating .ebootux-header-bar {
   position: fixed;
-  top: 12px;
+  top: 0px;
   left: 50%;
   transform: translateX(-50%);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
