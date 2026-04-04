@@ -1765,14 +1765,20 @@ h1 {
   position: sticky;
   top: 0;
   z-index: 500;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: #111;
-  border-bottom: 1px solid #1f1f1f;
-  padding: 0 16px;
-  height: 56px;
+  gap: 10px;
+  background: linear-gradient(145deg, #101213, #121515);
+  border: 1px solid #1f2628;
+  border-top: 0;
+  padding: 0 14px;
+  min-height: 58px;
+  width: min(980px, calc(100vw - 26px));
+  margin: 0 auto;
+  border-radius: 0 0 18px 18px;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
 }
 
 .ebootux-header-title {
@@ -1789,7 +1795,68 @@ h1 {
 .ebootux-header-actions {
   display: flex;
   align-items: center;
+  gap: 7px;
+  justify-self: end;
+}
+
+.ebootux-float-toggle {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
+  font-size: 11px;
+  color: #b8cbcf;
+  user-select: none;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #223236;
+  background: rgba(0, 255, 255, 0.06);
+}
+
+.ebootux-float-toggle input {
+  appearance: none;
+  width: 34px;
+  height: 18px;
+  border-radius: 999px;
+  background: #233136;
+  position: relative;
+  border: 1px solid #2d4045;
+  cursor: pointer;
+  transition: background 0.22s ease;
+}
+
+.ebootux-float-toggle input::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 1px;
+  top: 1px;
+  border-radius: 50%;
+  background: #dffcff;
+  transition: transform 0.22s ease;
+}
+
+.ebootux-float-toggle input:checked {
+  background: #00dce8;
+}
+
+.ebootux-float-toggle input:checked::before {
+  transform: translateX(16px);
+}
+
+.ebootux-float-toggle span {
+  letter-spacing: 0.03em;
+}
+
+.ebootux-template:not(.header-floating) .ebootux-header-bar {
+  top: 0;
+  width: 100%;
+  border-radius: 0;
+}
+
+.ebootux-template.header-floating .ebootux-header-bar {
+  top: 12px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 .ebootux-header-bar .ebootux-exit-btn {
@@ -1990,8 +2057,13 @@ h1 {
   }
 
   .ebootux-header-bar {
-    padding: 0 10px;
-    height: 50px;
+    padding: 0 8px;
+    min-height: 50px;
+    width: calc(100vw - 12px);
+  }
+
+  .ebootux-float-toggle span {
+    display: none;
   }
 
   .ebootux-progress-track {
@@ -2607,6 +2679,19 @@ h1 {
   gap: 12px;
   align-items: center;
   z-index: 1505;
+}
+
+body.in-ebootux .floating-container {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+body.in-ebootux .floating-container.ebootux-floating-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .floating-btn {
