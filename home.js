@@ -202,96 +202,164 @@ async function loadHomeSection() {
 
 // === STATUX MODALES: Offline y Confirmación ===
 (function(){
-  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
   // 1. OFFLINE MODAL
-  ready(() => {
-    const btnAdvanced = document.getElementById('settingsAdvancedBtn');
-    const offlineModal = document.getElementById('stx-offline-modal');
-    const btnClose = document.getElementById('stx-offline-close');
-    const overlay = offlineModal?.querySelector('.stx-modal-overlay');
+  function ensureOfflineModal() {
+    let modal = document.getElementById('stx-offline-modal');
+    if (modal) return modal;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div id="stx-offline-modal" class="stx-modal stx-invisible">
+        <div class="stx-modal-overlay" tabindex="-1"></div>
+        <div class="stx-modal-box" role="dialog" aria-labelledby="stx-offline-title" aria-modal="true">
+          <button class="stx-modal-close" id="stx-offline-close" aria-label="Cerrar">
+            <img src="Logout.svg" alt="Cerrar">
+          </button>
+          <h2 id="stx-offline-title">Modo Offline</h2>
+          <p>Statux funciona sin conexión, tus códigos y datos se mantienen seguros en tu dispositivo.</p>
+          <label class="stx-switch">
+            <input type="checkbox" id="stx-offline-toggle">
+            <span class="stx-slider"></span>
+            Habilitar modo offline
+          </label>
+        </div>
+      </div>`;
+    modal = wrapper.firstElementChild;
+    if (modal) document.body.appendChild(modal);
+    return modal;
+  }
+  function getOfflineModal() {
+    return document.getElementById('stx-offline-modal') || ensureOfflineModal();
+  }
+  function openOfflineModal() {
+    const offlineModal = getOfflineModal();
+    if (!offlineModal) return false;
     const chk = document.getElementById('stx-offline-toggle');
-    // Limpia eventos
-    if (btnAdvanced) {
-      btnAdvanced.replaceWith(btnAdvanced.cloneNode(true));
-    }
-    const btnAdv = document.getElementById('settingsAdvancedBtn');
-    btnAdv?.addEventListener('click', (e)=>{
+    if (chk) chk.checked = localStorage.getItem('stx:offline-mode') === '1';
+    offlineModal.classList.remove('stx-invisible');
+    setTimeout(()=>offlineModal.classList.add('stx-active'),10);
+    const url = new URL(window.location.href);
+    url.searchParams.set('modal', 'offline');
+    window.history.pushState({}, '', url);
+    return true;
+  }
+  function closeOfflineModal() {
+    const offlineModal = getOfflineModal();
+    if (!offlineModal) return;
+    offlineModal.classList.remove('stx-active');
+    setTimeout(()=>offlineModal.classList.add('stx-invisible'),170);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('modal');
+    window.history.replaceState({}, '', url);
+  }
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#settingsAdvancedBtn')) {
       e.preventDefault();
-      offlineModal.classList.remove('stx-invisible');
-      setTimeout(()=>offlineModal.classList.add('stx-active'),10);
-    });
-    function closeOfflineModal() {
-      offlineModal.classList.remove('stx-active');
-      setTimeout(()=>offlineModal.classList.add('stx-invisible'),170);
+      e.stopPropagation();
+      openOfflineModal();
+      return;
     }
-    btnClose?.addEventListener('click', closeOfflineModal);
-    overlay?.addEventListener('click', closeOfflineModal);
-    chk?.addEventListener('change', function(e){
-      const enabled = !!e.target.checked;
-      localStorage.setItem('stx:offline-mode', enabled ? '1' : '0');
-    });
-    if(chk) chk.checked = localStorage.getItem('stx:offline-mode') === '1';
-    document.addEventListener('keydown',function(e){
-      if (e.key === 'Escape' && offlineModal.classList.contains('stx-active')) {
-        closeOfflineModal();
-      }
-    });
+    if (e.target.closest('#stx-offline-close') || e.target.closest('#stx-offline-modal .stx-modal-overlay')) {
+      closeOfflineModal();
+    }
+  });
+  document.addEventListener('change', (e) => {
+    if (!e.target.matches('#stx-offline-toggle')) return;
+    const enabled = !!e.target.checked;
+    localStorage.setItem('stx:offline-mode', enabled ? '1' : '0');
+  });
+  document.addEventListener('keydown',function(e){
+    const offlineModal = getOfflineModal();
+    if (e.key === 'Escape' && offlineModal?.classList.contains('stx-active')) {
+      closeOfflineModal();
+    }
   });
 
   // 2. MODAL CONFIRMACIÓN ELIMINAR CÓDIGO
-  ready(() => {
-    const confirmModal = document.getElementById('stx-confirm-modal');
-    const btnClose = document.getElementById('stx-confirm-close');
-    const overlay = confirmModal?.querySelector('.stx-modal-overlay');
-    const btnCancel = document.getElementById('stx-confirm-cancel');
-    const btnAccept = document.getElementById('stx-confirm-accept');
-    let confirmDeleteCodeId = null;
+  let confirmDeleteCodeId = null;
+  function ensureConfirmModal() {
+    let modal = document.getElementById('stx-confirm-modal');
+    if (modal) return modal;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+      <div id="stx-confirm-modal" class="stx-modal stx-invisible">
+        <div class="stx-modal-overlay" tabindex="-1"></div>
+        <div class="stx-modal-box" role="dialog" aria-labelledby="stx-confirm-title" aria-modal="true">
+          <button class="stx-modal-close" id="stx-confirm-close" aria-label="Cancelar">
+            <img src="Logout.svg" alt="Cancelar">
+          </button>
+          <h3 id="stx-confirm-title">¿Eliminar código guardado?</h3>
+          <p id="stx-confirm-message">¿Estás seguro de borrar este código? Esta acción no se puede deshacer.</p>
+          <div class="stx-confirm-actions">
+            <button class="stx-btn stx-cancel-btn" id="stx-confirm-cancel" type="button">Cancelar</button>
+            <button class="stx-btn stx-confirm-btn" id="stx-confirm-accept" type="button">Confirmar</button>
+          </div>
+        </div>
+      </div>`;
+    modal = wrapper.firstElementChild;
+    if (modal) document.body.appendChild(modal);
+    return modal;
+  }
+  function getConfirmModal() {
+    return document.getElementById('stx-confirm-modal') || ensureConfirmModal();
+  }
+  function openConfirmModal(codeId) {
+    const confirmModal = getConfirmModal();
+    if (!confirmModal) return;
+    confirmDeleteCodeId = codeId;
+    confirmModal.classList.remove('stx-invisible');
+    setTimeout(()=>confirmModal.classList.add('stx-active'),10);
+    const url = new URL(window.location.href);
+    url.searchParams.set('modal', 'confirm-delete');
+    window.history.pushState({}, '', url);
+  }
+  function closeConfirmModal() {
+    const confirmModal = getConfirmModal();
+    if (!confirmModal) return;
+    confirmModal.classList.remove('stx-active');
+    setTimeout(()=>confirmModal.classList.add('stx-invisible'),180);
+    confirmDeleteCodeId = null;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('modal');
+    window.history.replaceState({}, '', url);
+  }
+  function acceptConfirmDelete() {
+    if (!confirmDeleteCodeId) return closeConfirmModal();
+    if (window.stxRuntime && typeof stxRuntime !== 'undefined') {
+      if(stxRuntime.stxStorage) {
+        stxRuntime.stxStorage.deleteCode(confirmDeleteCodeId);
+        if (typeof stxRuntime.stxRenderCodes === "function") stxRuntime.stxRenderCodes();
+      } else if(stxRuntime.deleteCode && typeof stxRuntime.deleteCode === 'function') {
+        stxRuntime.deleteCode(confirmDeleteCodeId);
+        if (stxRuntime.renderCodes) stxRuntime.renderCodes();
+      }
+    }
     const codesContainer = document.getElementById('codes');
     if (codesContainer) {
-      codesContainer.addEventListener('click', function(ev) {
-        const btnDel = ev.target.closest('.stx-icon-btn.delete,.icon-btn.delete');
-        if (!btnDel) return;
-        const id = btnDel.getAttribute('data-stx-id');
-        ev.preventDefault();
-        openConfirmModal(id);
-      });
+      const el = codesContainer.querySelector(`[data-stx-id=\"${confirmDeleteCodeId}\"]`);
+      if(el) el.remove();
     }
-    function openConfirmModal(codeId) {
-      confirmDeleteCodeId = codeId;
-      confirmModal.classList.remove('stx-invisible');
-      setTimeout(()=>confirmModal.classList.add('stx-active'),10);
+    closeConfirmModal();
+  }
+  document.addEventListener('click', (e) => {
+    const btnDelete = e.target.closest('.stx-icon-btn.delete,.icon-btn.delete');
+    if (btnDelete && btnDelete.hasAttribute('data-stx-id')) {
+      e.preventDefault();
+      openConfirmModal(btnDelete.getAttribute('data-stx-id'));
+      return;
     }
-    function closeConfirmModal() {
-      confirmModal.classList.remove('stx-active');
-      setTimeout(()=>confirmModal.classList.add('stx-invisible'),180);
-      confirmDeleteCodeId = null;
-    }
-    btnClose?.addEventListener('click', closeConfirmModal);
-    btnCancel?.addEventListener('click', closeConfirmModal);
-    overlay?.addEventListener('click', closeConfirmModal);
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape' && confirmModal.classList.contains('stx-active')) {
-        closeConfirmModal();
-      }
-    });
-    btnAccept?.addEventListener('click', function(){
-      if (!confirmDeleteCodeId) return closeConfirmModal();
-      if (window.stxRuntime && typeof stxRuntime !== 'undefined') {
-        if(stxRuntime.stxStorage) {
-          stxRuntime.stxStorage.deleteCode(confirmDeleteCodeId);
-          if (typeof stxRuntime.stxRenderCodes === "function") stxRuntime.stxRenderCodes();
-        } else if(stxRuntime.deleteCode && typeof stxRuntime.deleteCode === 'function') {
-          stxRuntime.deleteCode(confirmDeleteCodeId);
-          if (stxRuntime.renderCodes) stxRuntime.renderCodes();
-        }
-      }
-      const codesContainer = document.getElementById('codes');
-      if (codesContainer) {
-        const el = codesContainer.querySelector(`[data-stx-id=\"${confirmDeleteCodeId}\"]`);
-        if(el) el.remove();
-      }
+    if (e.target.closest('#stx-confirm-close') || e.target.closest('#stx-confirm-cancel') || e.target.closest('#stx-confirm-modal .stx-modal-overlay')) {
       closeConfirmModal();
-    });
+      return;
+    }
+    if (e.target.closest('#stx-confirm-accept')) {
+      acceptConfirmDelete();
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    const confirmModal = getConfirmModal();
+    if (e.key === 'Escape' && confirmModal?.classList.contains('stx-active')) {
+      closeConfirmModal();
+    }
   });
 })();
 
