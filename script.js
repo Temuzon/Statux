@@ -165,7 +165,12 @@ document.addEventListener("click", (e) => {
 
 function syncSectionFromLocation() {
   const sectionFromHash = (window.location.hash || "#Home").replace("#", "") || "Home";
+  if (sectionFromHash === "ebootux-template") return;
   if (!document.getElementById(sectionFromHash)) return;
+  if (document.body.classList.contains("in-ebootux")) {
+    closeEbootuxTemplate({ targetSection: sectionFromHash, updateUrl: false });
+    return;
+  }
   syncingSectionFromHistory = true;
   showSection(sectionFromHash, { updateUrl: false });
   syncingSectionFromHistory = false;
@@ -887,21 +892,11 @@ document.addEventListener("click", async function (e) {
 
 
   if (e.target.closest(".ebootux-exit-btn")) {
-    const ebootux = document.querySelector(".ebootux-template");
-    if (!ebootux) return;
-    if (typeof ebootuxHeaderCleanup === "function") {
-      ebootuxHeaderCleanup();
-      ebootuxHeaderCleanup = null;
-    }
-
-    ebootux.classList.add("hidden");
-    ebootux.classList.remove("active");
-    document.body.classList.remove("in-ebootux");
-    document.querySelector(".floating-container")?.classList.remove("ebootux-floating-visible");
-    navigationLocked = false;
-    toggleFooterVisibility(true);
-    setUrlState({ section: lastSectionBeforeEbootux || "Home", keepCard: false, keepModal: false, replace: true });
-    showSection(lastSectionBeforeEbootux || "Home");
+    closeEbootuxTemplate({
+      targetSection: lastSectionBeforeEbootux || "Home",
+      updateUrl: true,
+      replaceUrl: true
+    });
   }
 });
 
@@ -1124,6 +1119,30 @@ function toggleFooterVisibility(show) {
   const footer = document.querySelector("footer");
   if (!footer) return;
   footer.style.display = show ? "" : "none";
+}
+
+function closeEbootuxTemplate({ targetSection, updateUrl = false, replaceUrl = true } = {}) {
+  const ebootux = document.querySelector(".ebootux-template");
+  if (typeof ebootuxHeaderCleanup === "function") {
+    ebootuxHeaderCleanup();
+    ebootuxHeaderCleanup = null;
+  }
+
+  if (ebootux) {
+    ebootux.classList.add("hidden");
+    ebootux.classList.remove("active");
+  }
+
+  document.body.classList.remove("in-ebootux");
+  document.querySelector(".floating-container")?.classList.remove("ebootux-floating-visible");
+  navigationLocked = false;
+  toggleFooterVisibility(true);
+
+  const fallbackSection = targetSection || lastSectionBeforeEbootux || "Home";
+  if (updateUrl) {
+    setUrlState({ section: fallbackSection, keepCard: false, keepModal: false, replace: replaceUrl });
+  }
+  showSection(fallbackSection, { updateUrl: false });
 }
 
 function entrarEnEbootux() {
