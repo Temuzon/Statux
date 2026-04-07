@@ -2423,6 +2423,7 @@ h1 {
   .marketux-cards,
   .empaquetux-cards {
     width: 300px;
+    min-width: 290px;
     padding: 10px;
   }
 
