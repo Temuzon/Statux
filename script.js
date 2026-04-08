@@ -836,19 +836,32 @@ function playUnlockAnimation() {
         <path class="stx-unlock-path stx-unlock-ojos" d="${UNLOCK_LOGO_OJOS_PATH}"></path>
       </svg>
     </div>
+    <button type="button" class="stx-unlock-skip-btn" aria-label="Omitir animación">Omitir</button>
   `;
 
   document.body.appendChild(overlay);
 
   return new Promise((resolve) => {
-    unlockAnimationTimeoutId = setTimeout(() => {
+    let finished = false;
+    const skipBtn = overlay.querySelector(".stx-unlock-skip-btn");
+
+    const closeOverlay = () => {
+      if (finished) return;
+      finished = true;
+      if (unlockAnimationTimeoutId) {
+        clearTimeout(unlockAnimationTimeoutId);
+        unlockAnimationTimeoutId = null;
+      }
       overlay.classList.add("is-hiding");
       setTimeout(() => {
         overlay.remove();
         unlockAnimationTimeoutId = null;
         resolve();
       }, 250);
-    }, 3400);
+    };
+
+    skipBtn?.addEventListener("click", closeOverlay, { once: true });
+    unlockAnimationTimeoutId = setTimeout(closeOverlay, 3400);
   });
 }
 
@@ -876,7 +889,11 @@ document.addEventListener("click", async function (e) {
 
       const courseUrl = card.dataset.courseUrl || "";
       if (courseUrl) {
-        window.location.href = courseUrl;
+        const activeSectionId = document.querySelector(".app-section.active-section")?.id || "Home";
+        const returnUrl = `${window.location.origin}${window.location.pathname}#${activeSectionId}`;
+        const targetUrl = new URL(courseUrl, window.location.href);
+        targetUrl.searchParams.set("stx_return", returnUrl);
+        window.location.href = targetUrl.toString();
         return;
       }
 

@@ -3165,7 +3165,7 @@ body.stx-reduce-motion *::after {
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none;
+  pointer-events: auto;
   opacity: 1;
   transition: opacity 0.25s ease;
 }
@@ -3181,6 +3181,25 @@ body.stx-reduce-motion *::after {
   animation:
     stx-impacto-entrada 0.8s cubic-bezier(0.19, 1, 0.22, 1) 2.5s forwards,
     stx-vibrar-fuerte 0.1s ease-in-out 2.5s 6;
+}
+
+.stx-unlock-skip-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  border: 1px solid #2f3d40;
+  background: rgba(18, 22, 23, 0.9);
+  color: #d6f8ff;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.stx-unlock-skip-btn:hover {
+  border-color: #00ffff;
+  color: #00ffff;
 }
 
 .stx-unlock-container::after {
