@@ -388,9 +388,10 @@
       "code": "12345-",
       "price": "12.99",
       "image": "",
+      "courseUrl": "Systux/Getux/H-SDDP.html",
       "description": "",
-      "yes": "✔ ,✔ Templux",
-      "no": "❌ ,❌ ,❌ Systux",
+      "yes": "✔ ,✔ Systux",
+      "no": "❌ ,❌ ,❌ Templux",
       "link": "#",
       "blocks": []
     },
