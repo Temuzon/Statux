@@ -1517,7 +1517,7 @@ footer.stx-footer-ready {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 32px;
+  font-size: 20px;
   color: #0ff;
 }
 
@@ -1553,8 +1553,8 @@ footer.stx-footer-ready {
 }
 
 .logout-btn {
-  background-color: transparent;
-  border: 3px solid #0ff;
+  background-color: #000;
+  border: none;
   border-radius: 10px;
   padding: 7px;
   cursor: pointer;
@@ -1811,6 +1811,7 @@ footer.stx-footer-ready {
 }
 
 .ebootux-nav-panel {
+  width: 80%;
   position: sticky;
   top: 60px;
   z-index: 498;
@@ -1820,6 +1821,7 @@ footer.stx-footer-ready {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: fixed;
 }
 
 .ebootux-template.header-floating .ebootux-nav-panel {
