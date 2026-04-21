@@ -399,6 +399,73 @@
       color: #df2531;
     }
 
+    /* ── OVERLAY DE VIDEO ── */
+.stx-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.stx-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.stx-overlay-content {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(223, 37, 49, 0.3);
+  border: 1px solid rgba(223, 37, 49, 0.2);
+}
+
+.stx-overlay-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.stx-overlay-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.stx-overlay-close:hover {
+  background: #df2531;
+  border-color: #df2531;
+  transform: scale(1.1);
+}
+
     /* RESPONSIVE */
     @media (max-width: 800px) {
       .stx-wrap { grid-template-columns: 1fr; }
@@ -622,14 +689,6 @@
   </div>
 </div>
 
-<!-- OVERLAY DE VIDEO -->
-<div class="stx-overlay" id="stxOverlay" onclick="closeVideo()">
-  <div class="stx-overlay-content" onclick="event.stopPropagation()">
-    <button class="stx-close-overlay" onclick="closeVideo()">&times;</button>
-    <iframe id="stxVideoFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-</div>
-
 <script>
   // Variable global para almacenar los datos de los músculos
   let MUSCLE_DATA = {};
@@ -790,5 +849,14 @@
   window.openVideo = openVideo;
   window.closeVideo = closeVideo;
 </script>
+  
+<!-- OVERLAY DE VIDEO -->
+<div class="stx-overlay" id="stxOverlay" onclick="closeVideo()">
+  <div class="stx-overlay-content" onclick="event.stopPropagation()">
+    <button class="stx-close-overlay" onclick="closeVideo()">&times;</button>
+    <iframe id="stxVideoFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+
 </body>
 </html>
