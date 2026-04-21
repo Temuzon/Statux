@@ -165,7 +165,12 @@ document.addEventListener("click", (e) => {
 
 function syncSectionFromLocation() {
   const sectionFromHash = (window.location.hash || "#Home").replace("#", "") || "Home";
+  if (sectionFromHash === "ebootux-template") return;
   if (!document.getElementById(sectionFromHash)) return;
+  if (document.body.classList.contains("in-ebootux")) {
+    closeEbootuxTemplate({ targetSection: sectionFromHash, updateUrl: false });
+    return;
+  }
   syncingSectionFromHistory = true;
   showSection(sectionFromHash, { updateUrl: false });
   syncingSectionFromHistory = false;
@@ -378,9 +383,30 @@ function normalizarProductsDesdeJSON(json) {
     return out;
   }
 
+  // Formato 2b: { cards: [...] }
+  if (Array.isArray(json?.cards)) {
+    json.cards.forEach((p) => {
+      const n = normalizeProduct(p);
+      if (n) out.push(n);
+    });
+    return out;
+  }
+
   // Formato 3: { products: { categoria: [...] } }
   if (json?.products && typeof json.products === "object") {
     Object.entries(json.products).forEach(([category, arr]) => {
+      if (!Array.isArray(arr)) return;
+      arr.forEach((item) => {
+        const n = normalizeProduct(item, category);
+        if (n) out.push(n);
+      });
+    });
+    if (out.length) return out;
+  }
+
+  // Formato 3b: { cards: { categoria: [...] } }
+  if (json?.cards && typeof json.cards === "object") {
+    Object.entries(json.cards).forEach(([category, arr]) => {
       if (!Array.isArray(arr)) return;
       arr.forEach((item) => {
         const n = normalizeProduct(item, category);
@@ -418,11 +444,24 @@ function getLockIconByCode(code) {
 
 function formatPriceText(price) {
   const raw = String(price || "").trim();
-  if (!raw) return "Gratis";
+  if (!raw) return "Entrar";
   return raw;
 }
 
 async function fetchAndRenderCards() {
+  const parseCardsJson = (raw) => {
+    const text = String(raw || "").replace(/^\uFEFF/, "");
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      const sanitized = text
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/^\s*\/\/.*$/gm, "")
+        .replace(/,\s*([}\]])/g, "$1");
+      return JSON.parse(sanitized);
+    }
+  };
+
   const cacheBuster = `v=${Date.now()}`;
   const candidates = [`${CARDS_JSON_URL}?${cacheBuster}`, `/${CARDS_JSON_URL}?${cacheBuster}`, CARDS_JSON_URL, `/${CARDS_JSON_URL}`];
   let lastError = null;
@@ -490,12 +529,12 @@ async function fetchAndRenderCards() {
       const raw = await res.text();
       let json;
       try {
-        json = JSON.parse(raw);
+        json = parseCardsJson(raw);
       } catch (parseError) {
         console.error("cards.json inválido:", parseError);
         mostrarModal(
           "Error en cards.json",
-          "Hay un error de sintaxis en data/cards.json. Revisa comas, comillas y puntos extra (por ejemplo: previewVideo con un punto extra al final)."
+          "Hay un error de sintaxis en data/cards.json. Revisa comas, comillas o formato del objeto principal."
         );
         throw parseError;
       }
@@ -526,6 +565,7 @@ const previewYes = previewModal?.querySelector(".preview-si");
 const previewNo = previewModal?.querySelector(".preview-no");
 const previewBuyBtn = previewModal?.querySelector(".btn-de-compra");
 const previewDescription = previewModal?.querySelector(".preview-description");
+const previewBuyWrap = previewBuyBtn?.closest(".box-preview-btn-buy");
 let previewSourceCard = null;
 
 if (previewModal) {
@@ -552,15 +592,30 @@ document.addEventListener("click", (e) => {
   previewSourceCard = btn.closest(".ebootux-cards");
   currentCardSlug = slugify(title);
 
-  if (previewTitle) previewTitle.textContent = title;
+  if (previewTitle) {
+    const hasLink = Boolean(String(link || "").trim()) && String(link || "").trim() !== "#";
+    previewTitle.textContent = title;
+    if (!hasLink) {
+      const pulse = document.createElement("span");
+      pulse.className = "pulse";
+      pulse.setAttribute("aria-hidden", "true");
+      previewTitle.appendChild(pulse);
+    }
+  }
   if (previewImage) previewImage.src = image;
   if (previewDescription) previewDescription.textContent = description;
 
   if (previewBuyBtn) {
-    const priceText = formatPriceText(price);
-    previewBuyBtn.innerHTML = `<img src="shopping_cart_24dp_777777.svg" class="img-de-carrito-de-compra"/>${priceText ? `$${escAttr(priceText)}` : ""}`;
-    previewBuyBtn.href = link;
-    previewBuyBtn.target = "_self";
+    const isFree = !String(price || "").trim() || isFreeProduct(price);
+    const hasLink = Boolean(String(link || "").trim()) && String(link || "").trim() !== "#";
+    const shouldHideBuy = isFree || !hasLink;
+    if (previewBuyWrap) previewBuyWrap.style.display = shouldHideBuy ? "none" : "";
+    if (!shouldHideBuy) {
+      const priceText = formatPriceText(price);
+      previewBuyBtn.innerHTML = `<img src="shopping_cart_24dp_777777.svg" class="img-de-carrito-de-compra"/>${priceText ? `$${escAttr(priceText)}` : ""}`;
+      previewBuyBtn.href = link;
+      previewBuyBtn.target = "_self";
+    }
   }
 
   if (previewYes) {
@@ -610,6 +665,7 @@ const plantituxPreviewImg = $("#plantitux-preview-img");
 const plantituxPreviewVideo = $("#plantitux-preview-video");
 const plantituxPreviewTitle = $("#plantitux-preview-title");
 const plantituxPreviewBuy = $("#plantitux-preview-buy");
+const plantituxPreviewBuyWrap = plantituxPreviewBuy?.closest(".box-preview-btn-buy");
 const plantituxPreviewClose = $("#plantitux-preview-close");
 if (plantituxPreviewClose && plantituxPreviewModal) {
   plantituxPreviewClose.addEventListener("click", () => {
@@ -633,7 +689,16 @@ document.addEventListener("click", (e) => {
   const link = card.dataset.link || "#";
   currentCardSlug = slugify(title);
 
-  if (plantituxPreviewTitle) plantituxPreviewTitle.textContent = title;
+  if (plantituxPreviewTitle) {
+    const hasLink = Boolean(String(link || "").trim()) && String(link || "").trim() !== "#";
+    plantituxPreviewTitle.textContent = title;
+    if (!hasLink) {
+      const pulse = document.createElement("span");
+      pulse.className = "pulse";
+      pulse.setAttribute("aria-hidden", "true");
+      plantituxPreviewTitle.appendChild(pulse);
+    }
+  }
 
   if (video && plantituxPreviewVideo) {
     plantituxPreviewVideo.src = video;
@@ -646,10 +711,16 @@ document.addEventListener("click", (e) => {
   }
 
   if (plantituxPreviewBuy) {
-    const priceText = formatPriceText(price);
-    plantituxPreviewBuy.innerHTML = `<img src="shopping_cart_24dp_777777.svg" class="img-de-carrito-de-compra"/>${priceText ? `$${escAttr(priceText)}` : ""}`;
-    plantituxPreviewBuy.href = link;
-    plantituxPreviewBuy.target = "_self";
+    const isFree = !String(price || "").trim() || isFreeProduct(price);
+    const hasLink = Boolean(String(link || "").trim()) && String(link || "").trim() !== "#";
+    const shouldHideBuy = isFree || !hasLink;
+    if (plantituxPreviewBuyWrap) plantituxPreviewBuyWrap.style.display = shouldHideBuy ? "none" : "";
+    if (!shouldHideBuy) {
+      const priceText = formatPriceText(price);
+      plantituxPreviewBuy.innerHTML = `<img src="shopping_cart_24dp_777777.svg" class="img-de-carrito-de-compra"/>${priceText ? `$${escAttr(priceText)}` : ""}`;
+      plantituxPreviewBuy.href = link;
+      plantituxPreviewBuy.target = "_self";
+    }
   }
 
   plantituxPreviewModal.classList.add("active");
@@ -783,20 +854,50 @@ function playUnlockAnimation() {
         <path class="stx-unlock-path stx-unlock-ojos" d="${UNLOCK_LOGO_OJOS_PATH}"></path>
       </svg>
     </div>
+    <button type="button" class="stx-unlock-skip-btn" aria-label="Omitir animación">Omitir</button>
   `;
 
   document.body.appendChild(overlay);
 
   return new Promise((resolve) => {
-    unlockAnimationTimeoutId = setTimeout(() => {
+    let finished = false;
+    const skipBtn = overlay.querySelector(".stx-unlock-skip-btn");
+
+    const closeOverlay = () => {
+      if (finished) return;
+      finished = true;
+      if (unlockAnimationTimeoutId) {
+        clearTimeout(unlockAnimationTimeoutId);
+        unlockAnimationTimeoutId = null;
+      }
       overlay.classList.add("is-hiding");
       setTimeout(() => {
         overlay.remove();
         unlockAnimationTimeoutId = null;
         resolve();
       }, 250);
-    }, 3400);
+    };
+
+    skipBtn?.addEventListener("click", closeOverlay, { once: true });
+    unlockAnimationTimeoutId = setTimeout(closeOverlay, 3400);
   });
+}
+
+function showSystuxEnteringOverlay() {
+  const existing = document.querySelector(".stx-entering-overlay");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "stx-entering-overlay";
+  overlay.innerHTML = `
+    <div class="stx-entering-box" aria-live="polite" aria-label="Entrando a Systux">
+      <svg viewBox="0 0 500 500" aria-hidden="true" focusable="false">
+        <path class="statux-path" d="M225.999908,329.843475 C208.754364,329.843475 192.008804,329.843475 174.326538,329.843475 C183.611938,341.056976 192.271851,351.515106 201.261032,362.370880 C198.201035,364.906006 195.220856,367.375000 191.866653,370.153839 C162.266953,334.482910 132.839920,299.020081 103.021248,263.085266 C106.050591,260.508453 109.014664,257.987183 112.288124,255.202759 C123.075844,268.182800 133.683395,280.943848 144.288391,293.707062 C150.143509,300.753723 155.873627,307.910797 161.941696,314.768921 C163.266907,316.266693 165.789505,317.506073 167.764267,317.511322 C222.420624,317.657349 277.077484,317.644531 331.734070,317.558258 C333.576935,317.555359 335.885620,317.044189 337.189117,315.884308 C353.355225,301.499847 369.375000,286.950897 385.765564,272.143280 C384.529877,271.209564 383.585388,270.391602 382.544098,269.724823 C368.535309,260.754486 354.548309,251.748917 340.451202,242.919220 C338.612091,241.767288 336.192261,240.988205 334.037231,240.978699 C305.376312,240.852310 276.714447,240.848129 248.053604,240.980316 C245.716446,240.991104 243.135544,241.783005 241.090210,242.951279 C224.796158,252.258209 208.604172,261.743835 192.237350,271.258118 C154.250488,236.330368 116.254845,201.394531 77.970634,166.193390 C80.767830,163.147354 83.423027,160.255966 86.187958,157.245056 C95.312439,165.605209 104.133522,173.687347 113.192673,181.987640 C139.652328,158.549835 165.922913,135.279526 192.507385,111.731171 C195.126694,114.674324 197.713943,117.581436 200.576889,120.798340 C193.693237,126.946930 186.950073,132.970047 179.546585,139.582977 C225.233124,139.582977 269.891693,139.582977 316.079834,139.582977 C305.787048,133.226379 296.696075,127.611984 287.241547,121.773094 C289.378204,118.239273 291.391663,114.909187 293.531769,111.369659 C323.998322,130.067764 354.320984,148.677551 384.869934,167.426239 C382.716797,170.945099 380.661011,174.304886 378.509949,177.820343 C365.633148,169.905273 352.947998,161.983688 340.103790,154.329025 C337.825287,152.971115 334.886292,152.067215 332.249664,152.060959 C278.093140,151.932190 223.936127,151.926331 169.779755,152.085236 C167.281876,152.092560 164.276749,153.270981 162.376389,154.910614 C149.017395,166.436722 135.886520,178.227234 122.291122,190.280457 C124.253517,192.145004 125.982010,193.833664 127.759735,195.468811 C138.674179,205.507919 149.487091,215.663086 160.621109,225.452835 C162.729492,227.306671 166.117020,228.585266 168.931488,228.617218 C191.257889,228.870651 213.589355,228.856125 235.916687,228.646942 C239.058304,228.617493 242.523361,227.688934 245.263626,226.151535 C259.913574,217.932327 274.475555,209.543991 288.845490,200.846649 C292.481537,198.645935 294.928314,199.068649 298.237244,201.202606 C328.990509,221.035446 359.838196,240.721878 390.662048,260.445282 C392.184418,261.419434 393.739471,262.342529 395.423279,263.377930 C404.486969,255.199051 413.382843,247.171646 422.686096,238.776596 C425.335449,241.677872 427.970490,244.563492 430.894501,247.765564 C385.515686,288.799805 340.207825,329.769928 294.767517,370.859802 C291.938629,367.680725 289.408600,364.837463 286.673309,361.763519 C298.251312,351.268311 309.629120,340.954590 321.886566,329.843475 C289.317291,329.843475 257.908600,329.843475 225.999908,329.843475 Z"></path>
+      </svg>
+      <p>Entrando...</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
 }
 
 // ===============================
@@ -823,7 +924,14 @@ document.addEventListener("click", async function (e) {
 
       const courseUrl = card.dataset.courseUrl || "";
       if (courseUrl) {
-        window.location.href = courseUrl;
+        const activeSectionId = document.querySelector(".app-section.active-section")?.id || "Home";
+        const returnUrl = `${window.location.origin}${window.location.pathname}#${activeSectionId}`;
+        const targetUrl = new URL(courseUrl, window.location.href);
+        targetUrl.searchParams.set("stx_return", returnUrl);
+        showSystuxEnteringOverlay();
+        setTimeout(() => {
+          window.location.href = targetUrl.toString();
+        }, 120);
         return;
       }
 
@@ -887,21 +995,11 @@ document.addEventListener("click", async function (e) {
 
 
   if (e.target.closest(".ebootux-exit-btn")) {
-    const ebootux = document.querySelector(".ebootux-template");
-    if (!ebootux) return;
-    if (typeof ebootuxHeaderCleanup === "function") {
-      ebootuxHeaderCleanup();
-      ebootuxHeaderCleanup = null;
-    }
-
-    ebootux.classList.add("hidden");
-    ebootux.classList.remove("active");
-    document.body.classList.remove("in-ebootux");
-    document.querySelector(".floating-container")?.classList.remove("ebootux-floating-visible");
-    navigationLocked = false;
-    toggleFooterVisibility(true);
-    setUrlState({ section: lastSectionBeforeEbootux || "Home", keepCard: false, keepModal: false, replace: true });
-    showSection(lastSectionBeforeEbootux || "Home");
+    closeEbootuxTemplate({
+      targetSection: lastSectionBeforeEbootux || "Home",
+      updateUrl: true,
+      replaceUrl: true
+    });
   }
 });
 
@@ -1124,6 +1222,30 @@ function toggleFooterVisibility(show) {
   const footer = document.querySelector("footer");
   if (!footer) return;
   footer.style.display = show ? "" : "none";
+}
+
+function closeEbootuxTemplate({ targetSection, updateUrl = false, replaceUrl = true } = {}) {
+  const ebootux = document.querySelector(".ebootux-template");
+  if (typeof ebootuxHeaderCleanup === "function") {
+    ebootuxHeaderCleanup();
+    ebootuxHeaderCleanup = null;
+  }
+
+  if (ebootux) {
+    ebootux.classList.add("hidden");
+    ebootux.classList.remove("active");
+  }
+
+  document.body.classList.remove("in-ebootux");
+  document.querySelector(".floating-container")?.classList.remove("ebootux-floating-visible");
+  navigationLocked = false;
+  toggleFooterVisibility(true);
+
+  const fallbackSection = targetSection || lastSectionBeforeEbootux || "Home";
+  if (updateUrl) {
+    setUrlState({ section: fallbackSection, keepCard: false, keepModal: false, replace: replaceUrl });
+  }
+  showSection(fallbackSection, { updateUrl: false });
 }
 
 function entrarEnEbootux() {
@@ -1508,8 +1630,13 @@ const stxRuntime = (() => {
     accessCloseBtn: null,
     accessHoverToggle: null,
     accessReduceMotionToggle: null,
-    accessResetBtn: null
+    accessResetBtn: null,
+    confirmModal: null,
+    confirmCancelBtn: null,
+    confirmAcceptBtn: null,
+    confirmCloseBtn: null
   };
+  let stxPendingDeleteId = null;
 
   const stxStorage = {
     getCodes() {
@@ -1719,6 +1846,32 @@ const stxRuntime = (() => {
     stxSyncOverlayLock();
   }
 
+  function stxOpenDeleteConfirm(id) {
+    if (!id || !stxUi.confirmModal) return;
+    stxPendingDeleteId = id;
+    stxUi.confirmModal.classList.remove("stx-invisible");
+    stxUi.confirmModal.classList.add("stx-active");
+    stxUi.confirmModal.setAttribute("aria-hidden", "false");
+  }
+
+  function stxCloseDeleteConfirm() {
+    if (!stxUi.confirmModal) return;
+    stxUi.confirmModal.classList.remove("stx-active");
+    stxUi.confirmModal.classList.add("stx-invisible");
+    stxUi.confirmModal.setAttribute("aria-hidden", "true");
+    stxPendingDeleteId = null;
+  }
+
+  function stxConfirmDeleteCode() {
+    if (!stxPendingDeleteId) {
+      stxCloseDeleteConfirm();
+      return;
+    }
+    stxStorage.deleteCode(stxPendingDeleteId);
+    stxRenderCodes();
+    stxCloseDeleteConfirm();
+  }
+
 
   function stxBindPseudoButton(element, handler) {
     if (!element) return;
@@ -1768,7 +1921,7 @@ const stxRuntime = (() => {
     });
 
     stxBindPseudoButton(stxUi.advancedItem, () => {
-      // La apertura del modal offline se gestiona por delegación en home.js.
+      mostrarModal("No disponible", "No disponible");
     });
 
     stxBindPseudoButton(stxUi.fontItem, () => {
@@ -1796,6 +1949,21 @@ const stxRuntime = (() => {
       stxCloseAccess();
     });
 
+    stxUi.confirmCancelBtn?.addEventListener("click", stxCloseDeleteConfirm);
+    stxUi.confirmCloseBtn?.addEventListener("click", stxCloseDeleteConfirm);
+    stxUi.confirmAcceptBtn?.addEventListener("click", stxConfirmDeleteCode);
+
+    stxUi.confirmModal?.addEventListener("click", (e) => {
+      if (e.target === stxUi.confirmModal || e.target.classList.contains("stx-modal-overlay")) {
+        stxCloseDeleteConfirm();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !stxUi.confirmModal?.classList.contains("stx-active")) return;
+      stxCloseDeleteConfirm();
+    });
+
     stxUi.codesContainer?.addEventListener("click", (e) => {
       const button = e.target.closest(".stx-icon-btn");
       if (!button) return;
@@ -1810,9 +1978,7 @@ const stxRuntime = (() => {
       }
 
       if (action === "delete") {
-        if (document.getElementById("stx-confirm-modal")) return;
-        stxStorage.deleteCode(id);
-        stxRenderCodes();
+        stxOpenDeleteConfirm(id);
       }
     });
 
@@ -1835,6 +2001,10 @@ const stxRuntime = (() => {
     stxUi.accessHoverToggle = document.getElementById("toggle-hover");
     stxUi.accessReduceMotionToggle = document.getElementById("reduce-motion");
     stxUi.accessResetBtn = document.getElementById("accessResetBtn");
+    stxUi.confirmModal = document.getElementById("stx-confirm-modal");
+    stxUi.confirmCancelBtn = document.getElementById("stx-confirm-cancel");
+    stxUi.confirmAcceptBtn = document.getElementById("stx-confirm-accept");
+    stxUi.confirmCloseBtn = document.getElementById("stx-confirm-close");
   }
 
   function stxHydrateState() {
