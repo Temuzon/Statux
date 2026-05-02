@@ -638,6 +638,12 @@ const loginSection = document.querySelector(".sectionlogin");
 const closeBtn = document.querySelector(".close-login");
 
 function openLogin() {
+  const settingsOverlay = document.getElementById("settingsModal");
+  if (settingsOverlay?.classList.contains("active")) {
+    settingsOverlay.classList.remove("active");
+    settingsOverlay.setAttribute("aria-hidden", "true");
+  }
+
   loginSection.classList.add("active");
   document.body.style.overflow = "hidden";
 }

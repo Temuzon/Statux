@@ -836,7 +836,7 @@ function openPurchaseLink(link) {
 }
 
 function playUnlockAnimation() {
-  const existing = document.querySelector(".stx-unlock-overlay");
+  const existing = document.querySelector(".stx-entering-overlay");
   if (existing) existing.remove();
 
   if (unlockAnimationTimeoutId) {
@@ -845,43 +845,28 @@ function playUnlockAnimation() {
   }
 
   const overlay = document.createElement("div");
-  overlay.className = "stx-unlock-overlay";
+  overlay.className = "stx-entering-overlay";
   overlay.setAttribute("aria-hidden", "true");
   overlay.innerHTML = `
-    <div class="stx-unlock-container">
-      <svg viewBox="0 0 500 500">
-        <path class="stx-unlock-path stx-unlock-cuerpo" d="${UNLOCK_LOGO_CUERPO_PATH}"></path>
-        <path class="stx-unlock-path stx-unlock-ojos" d="${UNLOCK_LOGO_OJOS_PATH}"></path>
+    <div class="loader loader--draw stx-entering-loader">
+      <svg viewBox="0 0 500 500" aria-hidden="true" focusable="false">
+        <path class="statux-path" d="${UNLOCK_LOGO_CUERPO_PATH}"></path>
       </svg>
     </div>
-    <button type="button" class="stx-unlock-skip-btn" aria-label="Omitir animación">Omitir</button>
+    <p class="loader-status-text stx-entering-text">Entrando</p>
   `;
 
   document.body.appendChild(overlay);
 
   return new Promise((resolve) => {
-    let finished = false;
-    const skipBtn = overlay.querySelector(".stx-unlock-skip-btn");
-
-    const closeOverlay = () => {
-      if (finished) return;
-      finished = true;
-      if (unlockAnimationTimeoutId) {
-        clearTimeout(unlockAnimationTimeoutId);
-        unlockAnimationTimeoutId = null;
-      }
-      overlay.classList.add("is-hiding");
-      setTimeout(() => {
-        overlay.remove();
-        unlockAnimationTimeoutId = null;
-        resolve();
-      }, 250);
-    };
-
-    skipBtn?.addEventListener("click", closeOverlay, { once: true });
-    unlockAnimationTimeoutId = setTimeout(closeOverlay, 3400);
+    unlockAnimationTimeoutId = setTimeout(() => {
+      overlay.remove();
+      unlockAnimationTimeoutId = null;
+      resolve();
+    }, 1500);
   });
 }
+
 
 
 // ===============================
