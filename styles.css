@@ -284,21 +284,26 @@ footer.stx-footer-ready {
   transition: .43s;
 }
 
-.item.active {
-  background-color: #111;
-  color: #00ffff;
-}
-
 .item:hover{
   background-color: #222;
-  color: #00ffff;
+  color: #ffffff;
 }
 
+.item.active {
+  background-color: #000;
+  color: #ffffff;
+  filter: drop-shadow(0 0 4px #000)
+}
 
 .iconos-de-navegacion {
   width: 32px;
   height: 32px; 
   margin-left: 17px;
+  transition: filter 0.3s ease;
+}
+
+.item.active .iconos-de-navegacion {
+  filter: drop-shadow(0 0 6px #ffffff);
 }
 
 .logo {
