@@ -904,11 +904,11 @@ input[type=range]{ flex:1; -webkit-appearance:none; height:4px; border-radius:2p
                         <div class="card-footer"><h3>Entrenar</h3><p>Generador Inteligente</p></div>
                     </div>
                     <!-- TARJETA NUTRICIÓN — abre calculadora inline -->
-                    <div class="menu-card" onclick="navigate('nutrition')">
+                    <div class="menu-card" onclick="navigate('nutrition')" data-bloqueado="premium">
                         <div class="card-head"><div class="icon-wrap"><i data-lucide="activity"></i></div></div>
                         <div class="card-footer"><h3>Nutrición</h3><p>Macros & Proteína</p></div>
                     </div>
-                    <div class="menu-card" onclick="navigate('anatomy')">
+                    <div class="menu-card" onclick="navigate('anatomy')" data-bloqueado="premium">
                         <div class="card-head"><div class="icon-wrap"><i data-lucide="user"></i></div></div>
                         <div class="card-footer"><h3>Anatomía</h3><p>Mapa Muscular</p></div>
                     </div>
@@ -1943,6 +1943,7 @@ window.onload = () => {
     </script>
     <!-- Pyodide para la calculadora -->
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+    <script src="dashboard/core.js"></script>
     
 </body>
 </html>
