@@ -7,6 +7,14 @@
   let bloqueoActivo = true;
 
   // --- Detectar si estamos en modo preview ---
+  const isEmbeddedIframe = (() => {
+    try {
+      return window.self !== window.top;
+    } catch {
+      return true;
+    }
+  })();
+
   const isPreview = (() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -16,8 +24,8 @@
     }
   })();
 
-  // Solo activar bloqueo en preview
-  if (!isPreview) return;
+  // Activar bloqueo cuando el Systux se renderiza dentro de iframe o en modo preview
+  if (!isEmbeddedIframe && !isPreview) return;
 
   // --- Interceptar clicks ---
   document.addEventListener("click", (e) => {
@@ -26,9 +34,10 @@
 
     e.preventDefault();
     e.stopPropagation();
+    e.stopImmediatePropagation();
 
     triggerBloqueoUX(el);
-  });
+  }, true);
 
   // --- Interceptar formularios ---
   document.addEventListener("submit", (e) => {
@@ -36,8 +45,10 @@
     if (!el || !bloqueoActivo) return;
 
     e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
     triggerBloqueoUX(el);
-  });
+  }, true);
 
   // --- UX de bloqueo ---
   function triggerBloqueoUX(elemento) {
@@ -95,6 +106,6 @@
     localStorage.setItem(key, JSON.stringify(data));
   }
 
-  console.log("🔒 Modo preview activo — bloqueo habilitado");
+  console.log("🔒 Bloqueo activo en iframe/preview");
 
 })();
