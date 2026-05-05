@@ -1,10 +1,6 @@
-// ===============================
-// 🔒 SISTEMA DE BLOQUEO — STATUX
-// ===============================
-
 (function () {
   const SELECTOR_BLOQUEADO = "[data-bloqueado]";
-  let bloqueoActivo = true;
+  const PREVIEW_ICON = "visibility_24dp_777777_FILL0_wght400_GRAD0_opsz24.svg";
 
   // --- Detectar si estamos en modo preview ---
   const isEmbeddedIframe = (() => {
@@ -50,62 +46,67 @@
     triggerBloqueoUX(el);
   }, true);
 
-  // --- UX de bloqueo ---
   function triggerBloqueoUX(elemento) {
     mostrarModalBloqueo();
-
-    // micro feedback visual (opcional pero recomendado)
     elemento.classList.add("stx-bloqueado-feedback");
-
-    setTimeout(() => {
-      elemento.classList.remove("stx-bloqueado-feedback");
-    }, 300);
-
-    // tracking interno (futuro 🔥)
-    trackIntento(elemento);
+    setTimeout(() => elemento.classList.remove("stx-bloqueado-feedback"), 260);
   }
 
-  // --- Modal elegante ---
   function mostrarModalBloqueo() {
     let modal = document.getElementById("stx-modal-bloqueo");
-
     if (!modal) {
       modal = document.createElement("div");
       modal.id = "stx-modal-bloqueo";
-
-      modal.innerHTML = `
-        <div class="stx-overlay">
-          <div class="stx-modal">
-            <p class="stx-title">Acceso restringido</p>
-            <p class="stx-sub">Este nodo aún no es tuyo</p>
-            <button class="stx-btn">Desbloquear Systux</button>
-          </div>
-        </div>
-      `;
-
+      modal.innerHTML = `<div class="stx-overlay"><div class="stx-modal"><p class="stx-title">Acceso restringido</p><p class="stx-sub">Desbloquea el sistema completo</p><button class="stx-btn">Entendido</button></div></div>`;
       document.body.appendChild(modal);
-
-      // cerrar al click fuera
-      modal.querySelector(".stx-overlay").addEventListener("click", (e) => {
-        if (e.target.classList.contains("stx-overlay")) {
-          modal.remove();
-        }
-      });
+      modal.querySelector(".stx-overlay")?.addEventListener("click", (e) => { if (e.target.classList.contains("stx-overlay")) modal.remove(); });
+      modal.querySelector(".stx-btn")?.addEventListener("click", () => modal.remove());
     }
   }
 
-  // --- Tracking básico ---
-  function trackIntento(el) {
-    const key = "stx_bloqueos";
-    const data = JSON.parse(localStorage.getItem(key)) || {};
+  if (isEmbeddedIframe || isPreview) return;
 
-    const nombre = el.getAttribute("data-bloqueado") || "default";
+  const previewModal = document.getElementById("preview-modal");
+  if (!previewModal) return;
 
-    data[nombre] = (data[nombre] || 0) + 1;
-
-    localStorage.setItem(key, JSON.stringify(data));
+  let previewUrl = "";
+  let triggerBtn = previewModal.querySelector(".preview-trigger");
+  if (!triggerBtn) {
+    triggerBtn = document.createElement("button");
+    triggerBtn.type = "button";
+    triggerBtn.className = "preview-trigger";
+    triggerBtn.setAttribute("aria-label", "Abrir vista previa del Systux");
+    triggerBtn.innerHTML = `<img src="${PREVIEW_ICON}" class="img-de-vista-previa" alt="Vista previa">`;
+    const head = previewModal.querySelector(".box-preview .head-box");
+    if (head) head.appendChild(triggerBtn);
   }
+
+  const frameModal = document.getElementById("stx-preview-frame-modal");
+  const frame = document.getElementById("stx-preview-frame-iframe");
+  const frameClose = document.getElementById("stx-preview-frame-close");
+  if (!frameModal || !frame || !frameClose) return;
+
+  document.addEventListener("click", (e) => {
+    const previewBtn = e.target.closest(".btn-de-vista-previa");
+    if (!previewBtn) return;
+    const card = previewBtn.closest(".ebootux-cards, .getux-cards");
+    const url = String(card?.dataset.courseUrl || "").trim();
+    previewUrl = url;
+    previewModal.classList.toggle("has-course-preview", Boolean(url));
+  });
+
+  triggerBtn.addEventListener("click", () => {
+    if (!previewUrl) return;
+    const target = new URL(previewUrl, window.location.href);
+    const activeSectionId = document.querySelector(".app-section.active-section")?.id || "Home";
+    const returnUrl = `${window.location.origin}${window.location.pathname}#${activeSectionId}`;
+    target.searchParams.set("stx_return", returnUrl);
+    frame.src = target.toString();
+    frameModal.classList.add("active");
+  });
 
   console.log("🔒 Bloqueo activo en iframe/preview");
 
+  frameClose.addEventListener("click", closeFrame);
+  frameModal.addEventListener("click", (e) => { if (e.target === frameModal) closeFrame(); });
 })();
