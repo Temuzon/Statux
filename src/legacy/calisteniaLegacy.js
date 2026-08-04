@@ -1098,8 +1098,4 @@ function initCalisteniaRuntime(){
 }
 
 window.initCalisteniaRuntime = initCalisteniaRuntime;
-if (document.readyState === 'loading') {
-    window.addEventListener('load', initCalisteniaRuntime, { once: true });
-} else {
-    initCalisteniaRuntime();
-}
+// React/static mounts the markup first and calls this initializer explicitly.
